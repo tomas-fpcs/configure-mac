@@ -1,0 +1,97 @@
+- name: Set up macOS environment
+  hosts: localhost
+  become: false
+  vars:
+    zsh_files:
+      - { src: zshrc, dest: ~/.zshrc }
+    brews:
+      - awscli
+      - brotli
+      - c-ares
+      - ca-certificates
+      - cairo
+      - cffi
+      - cryptography
+      - fontconfig
+      - freetype
+      - gettext
+      - giflib
+      - glib
+      - graphite2
+      - harfbuzz
+      - helm
+      - icu4c@77
+      - jpeg-turbo
+      - libnghttp2
+      - libpng
+      - libtiff
+      - libunistring
+      - libuv
+      - libx11
+      - libxau
+      - libxcb
+      - libxdmcp
+      - libxext
+      - libxrender
+      - little-cms2
+      - lz4
+      - lzo
+      - mas
+      - maven
+      - mpdecimal
+      - node
+      - openjdk
+      - openjdk@17
+      - openssl@3
+      - pcre2
+      - pixman
+      - pycparser
+      - python@3.13
+      - readline
+      - sqlite
+      - telnet
+      - terraform
+      - xorgproto
+      - xz
+      - zstd
+    casks:
+      - rectangle
+    mas_apps:
+      - 310633997  # WhatsApp      (25.9.72)
+  tasks:
+    - name: Ensure zsh is the default shell
+      user:
+        name: "{{ lookup('env', 'USER') }}"
+        shell: /bin/zsh
+
+    - name: Copy Zsh config files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest | regex_replace('~', lookup('env', 'HOME')) }}"
+        owner: "{{ lookup('env', 'USER') }}"
+        mode: "0644"
+        force: yes
+      loop: "{{ zsh_files }}"
+
+    - name: Ensure Homebrew is installed
+      homebrew:
+        update_homebrew: yes
+
+    - name: Install Homebrew packages
+      homebrew:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ brews }}"
+
+    - name: Install Homebrew cask apps
+      homebrew_cask:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ casks }}"
+
+    - name: Install Mac App Store apps (optional)
+      when: mas_apps | length > 0
+      community.general.mas:
+        id: "{{ item }}"
+        state: present
+      loop: "{{ mas_apps }}"
