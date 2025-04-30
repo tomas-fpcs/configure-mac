@@ -15,7 +15,7 @@ This script will bootstrap by installing:
 - Ansible
 
 Once bootstrapped it will execute the Ansible playbook.
-The provided [playbook.xml](playbook.xml) is for my preferences, you need to update it for your needs.
+The provided [playbook.yml](playbook.yml) is for my preferences, you need to update it for your needs.
 
 To generate YAML for what you already have installed you can run this script. The output goes under "vars" in the playbook.
 
