@@ -2,8 +2,11 @@
   hosts: localhost
   become: false
   vars:
-    zsh_files:
-      - { src: zshrc, dest: ~/.zshrc }
+    home: "{{ lookup('env', 'HOME') }}"
+    files:
+      - { src: zshrc, dest: "{{ home }}/.zshrc" }
+      - { src: ssh_config, dest: "{{ home }}/.ssh/config" }
+
     brews:
       - awscli
       - brotli
@@ -64,14 +67,14 @@
         name: "{{ lookup('env', 'USER') }}"
         shell: /bin/zsh
 
-    - name: Copy Zsh config files
+    - name: Copy config files
       copy:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest | regex_replace('~', lookup('env', 'HOME')) }}"
-        owner: "{{ lookup('env', 'USER') }}"
+        src: "{{ files_dir }}/{{ item.src }}"
+        dest: "{{ item.dest }}"
+        remote_src: yes
         mode: "0644"
         force: yes
-      loop: "{{ zsh_files }}"
+      loop: "{{ files }}"
 
     - name: Ensure Homebrew is installed
       homebrew:

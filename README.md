@@ -4,8 +4,9 @@ Bootstrap with Ansible to configure and install apps on your Mac
 
 ## Usage 
 
+Any files you want to be copied must be put in a folder, and the path to that must be passed as a parameter, thusly:
 ```
-./configure-mac.sh  
+./configure-mac.sh <path-to-files-folder>
 ```
 
 This script will bootstrap by installing:
@@ -14,7 +15,7 @@ This script will bootstrap by installing:
 - Ansible
 
 Once bootstrapped it will execute the Ansible playbook.
-The provided [playbook.xml](playbook.xml) is for my preferences, but its simple to change.
+The provided [playbook.xml](playbook.xml) is for my preferences, you need to update it for your needs.
 
 To generate YAML for what you already have installed you can run this script. The output goes under "vars" in the playbook.
 

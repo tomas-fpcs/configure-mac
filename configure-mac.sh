@@ -2,6 +2,19 @@
 
 set -e
 
+if [ -z "$1" ]; then
+  echo "Usage: $0 <path-to-files-folder>"
+  exit 1
+fi
+
+FILES_DIR="$1"
+
+# Check if the directory exists
+if [ ! -d "$FILES_DIR" ]; then
+  echo "Error: '$FILES_DIR' is not a valid directory."
+  exit 1
+fi
+
 echo "🔧 Bootstrapping macOS for Ansible..."
 
 # 1. Install Homebrew if not already installed
@@ -31,15 +44,17 @@ else
   echo "📦 Ansible already installed."
 fi
 
-# 5. (Optional) Run your playbook if it exists
+# 5. Run your playbook
 PLAYBOOK=playbook.yml
 INVENTORY=inventory
 
 if [[ -f "$PLAYBOOK" && -f "$INVENTORY" ]]; then
-  echo "🚀 Running Ansible playbook..."
-  ansible-playbook -i "$INVENTORY" "$PLAYBOOK"
+  echo "🚀 Running Ansible playbook with files directory: $FILES_DIR"
+  ansible-playbook -i "$INVENTORY" "$PLAYBOOK" \
+    -e "files_dir=$FILES_DIR"
 else
   echo "ℹ️ No playbook.yml or inventory file found in current directory. Skipping Ansible run."
 fi
+
 
 echo "✅ Bootstrap complete!"
