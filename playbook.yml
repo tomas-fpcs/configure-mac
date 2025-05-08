@@ -4,8 +4,9 @@
   vars:
     home: "{{ lookup('env', 'HOME') }}"
     files:
-      - { src: zshrc, dest: "{{ home }}/.zshrc" }
-      - { src: ssh_config, dest: "{{ home }}/.ssh/config" }
+      - { src: "user-home/zshrc", dest: "{{ home }}/.zshrc" }
+      - { src: "user-home/ssh_config", dest: "{{ home }}/.ssh/config" }
+      - { src: "user-home/.config/1Password/ssh/agent.toml", dest: "{{ home }}/.config/1Password/ssh/agent.toml" }
 
     brews:
       - awscli
@@ -66,6 +67,23 @@
       user:
         name: "{{ lookup('env', 'USER') }}"
         shell: /bin/zsh
+
+    - name: Install 1Password CLI
+      homebrew:
+        name: 1password-cli
+        state: present
+
+    - name: Install 1Password GUI
+      homebrew_cask:
+        name: 1password
+        state: present
+      ignore_errors: true
+
+    - name: Install IntelliJ IDEA Community Edition
+      homebrew_cask:
+        name: intellij-idea-ce
+        state: present
+      ignore_errors: true
 
     - name: Copy config files
       copy:
